@@ -1,0 +1,111 @@
+# uses 🔐
+
+Taking inspiration from [aws-vault](https://github.com/99designs/aws-vaults), `uses` makes `use` of OS provided `s`ecret management solutions to save secrets in the development environment. Grouping of secrets is made possible by a config file.
+
+## ⚡️ Installation
+TODO: populate
+
+## 🧑‍💻 Usage
+
+```bash
+❯ uses                   
+NAME:
+   uses - securely manage secrets in dev environment
+
+USAGE:
+   uses [global options] command [command options] [arguments...]
+
+COMMANDS:
+   set, s     set a secret key value pair
+   get, g     get secret for a name
+   list, l    list all secrets saved using `uses`
+   remove, r  delete a secret
+   webgoat    get secrets for project webgoat
+   project1   get secrets for project project1
+   help, h    Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h  show help (default: false)
+```
+
+### Set
+Set a secret in secret store
+```bash
+❯ uses set GITHUB_TOKEN
+Overwrite value? (y/n) y
+Enter value: 
+INFO[0009] GITHUB_TOKEN saved
+```
+Set in one line (unsafe) 
+```bash
+❯ uses set GITHUB_TOKEN=sdknbowhlfownpns;s/dkfnbslsnwwn
+```
+Above will save the secret in prompt history. A safer way is to use `pbpaste` on Mac:
+```bash
+❯ uses set $(pbpaste)
+```
+or if the secret is already in the environment
+```bash
+❯ uses set GITHUB_TOKEN=${GITHUB_TOKEN}
+```
+
+### Get
+Get a secret from secret store
+```bash
+❯ uses get GITHUB_TOKEN
+sdknbowhlfownpns;s/dkfnbslsnwwn
+```
+Get can also run any command passed to it after setting the environment variable
+```bash
+❯ uses get GITHUB_TOKEN env | grep GITHUB_TOKEN
+GITHUB_TOKEN=sdknbowhlfownpns;s/dkfnbslsnwwn
+```
+
+### List
+Get a list of secrets managed by `uses`
+```bash
+❯ uses list
+[AWS_USER, GITHUB_TOKEN]
+```
+
+### Projects
+Inject a number of environment variables while running a command
+```bash
+❯ uses webgoat code ~/projects/webgoat
+INFO[0000] Starting child process: code /Users/u/projects/webgoat
+```
+This mapping of projects to environment variables is stored in a config file:
+```yaml
+project:
+- name: webgoat
+  secrets:
+  - GITHUB_TOKEN
+- name: project1
+  secrets:
+  - AWS_USER
+  - GITHUB_TOKEN
+```
+
+Location of the config file can be found using 
+```bash
+❯ uses config
+config file location: /Users/u/.config/uses/config.yaml
+```
+
+## 🛠 Contributing
+Contributions to the `uses` package are most welcome from engineers of all backgrounds and skill levels. In particular the addition of extra backends across popular operating systems would be appreciated.
+
+This project will adhere to the [Go Community Code of Conduct](https://go.dev/conduct) in the Github.
+
+To make a contribution:
+
+* Fork the repository
+* Make your changes on the fork
+* Submit a pull request back to this repo with a clear description of the problem you're solving
+* Ensure your PR passes all current (and new) tests
+
+## 🌈 Upcoming
+
+- [ ] cache password for multiple secrets in a profile
+- [ ] configure auto-complete
+- [ ] make available for other OSes as well in addition to Mac Darwin
