@@ -1,4 +1,4 @@
-module malikashish8/uses
+module github.com/malikashish8/uses
 
 go 1.18
 
