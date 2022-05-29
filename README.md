@@ -3,7 +3,10 @@
 Taking inspiration from [aws-vault](https://github.com/99designs/aws-vaults), `uses` makes `use` of OS provided `s`ecret management solutions to save secrets in the development environment. Grouping of secrets is made possible by a config file.
 
 ## ⚡️ Installation
-TODO: populate
+If you go installed run the following command to install uses at GOPATH
+```bash
+go install github.com/malikashish8/uses
+```
 
 ## 🧑‍💻 Usage
 
