@@ -19,5 +19,5 @@ jobs:
         goarch: ${{ matrix.goarch }}
         goversion: 1.18
         project_path: "./"
-        asset_name: uses-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
+        asset_name: uses-${{ matrix.goos }}-${{ matrix.goarch }}
         ldflags: -X main.gitRef=${{ github.ref }}

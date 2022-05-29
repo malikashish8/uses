@@ -1,4 +1,4 @@
-# 🔐 uses - **use** **s**ecure environment variables in dev
+# 🔐 uses - USE Secure environment variables in dev
 
 [![.github/workflows/release.yaml](https://github.com/malikashish8/uses/actions/workflows/release.yaml/badge.svg)](https://github.com/malikashish8/uses/actions/workflows/release.yaml)
 
