@@ -22,4 +22,4 @@ jobs:
         goversion: 1.18
         project_path: "./"
         binary_name: "uses"
-        ldflags: -X main.Version=$RELEASE_TAG
+        ldflags: -X main.gitRef=${{ github.ref }}

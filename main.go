@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/99designs/keyring"
 	log "github.com/sirupsen/logrus"
@@ -22,9 +24,18 @@ type ConfigStruct struct {
 var config ConfigStruct
 var ring keyring.Keyring
 var configpath string
-var Version = "development" // needs to be overridden during build
+var Version = "development"
+var gitRef = "" // needs to be overridden in CI
 
 func init() {
+	// set Version if gitRef is available
+	gitRef = strings.TrimSpace(gitRef)
+	refParts := strings.Split(gitRef, "/")
+	if len(gitRef) > 0 && len(refParts) > 0 {
+		fmt.Println("running ...")
+		Version = refParts[len(refParts)-1]
+	}
+
 	// check if running on a supported os
 	useros := runtime.GOOS
 	if useros == "darwin" {
