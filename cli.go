@@ -185,6 +185,7 @@ func enablecli() {
 		Name:     "uses",
 		Usage:    "securely manage secrets in dev environment",
 		Commands: appCommands,
+		Version:  Version,
 	}
 
 	err := app.Run(os.Args)

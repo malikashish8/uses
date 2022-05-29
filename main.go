@@ -22,6 +22,7 @@ type ConfigStruct struct {
 var config ConfigStruct
 var ring keyring.Keyring
 var configpath string
+var Version = "development" // needs to be overridden during build
 
 func init() {
 	// check if running on a supported os
