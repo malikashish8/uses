@@ -20,4 +20,4 @@ jobs:
         goversion: 1.18
         project_path: "./"
         binary_name: "uses"
-        ldflags: "-X 'main.Version=${{ env.GITHUB_REF_NAME }}'"
+        ldflags: "-X 'main.Version=${{ GITHUB_REF_NAME }}'"
