@@ -12,8 +12,6 @@ jobs:
         goarch: [amd64, arm64]
     steps:
     - uses: actions/checkout@v3
-    - shell: bash
-      run: env && echo $GITHUB_REF_NAME
     - uses: wangyoucao577/go-release-action@v1.28
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -21,5 +19,5 @@ jobs:
         goarch: ${{ matrix.goarch }}
         goversion: 1.18
         project_path: "./"
-        binary_name: "uses"
+        asset_name: uses-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
         ldflags: -X main.gitRef=${{ github.ref }}

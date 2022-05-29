@@ -1,16 +1,26 @@
-# uses 🔐
+# 🔐 uses - **use** **s**ecure environment variables in dev
+
+[![.github/workflows/release.yaml](https://github.com/malikashish8/uses/actions/workflows/release.yaml/badge.svg)](https://github.com/malikashish8/uses/actions/workflows/release.yaml)
 
 Taking inspiration from [aws-vault](https://github.com/99designs/aws-vaults), `uses` makes `use` of OS provided `s`ecret management solutions to save secrets in the development environment. Grouping of secrets is made possible by a config file.
 
+Having secrets lying around in environment variables in the development environment can be a nightmare as opensource packages are being [actively compromised](https://thehackernews.com/2022/05/pypi-package-ctx-and-php-library-phpass.html) to steal secrets. These packages can read all the environment variables. Good security hygine dictates that no secrets are stored in environment variables (using configs such as ~/.bashrc and ~/.zshrc). `uses` helps to implement the least privilege principle by saving all the secrets in a secret store and explicitly allowing processes to access the required secrets.
+
 ## ⚡️ Installation
-If you go installed run the following command to install uses at GOPATH
+Install from binary
 ```bash
-go install github.com/malikashish8/uses
+wget https://github.com/malikashish8/uses/releases/latest/download/uses-darwin-amd64.tar.gz
+tar -zxf uses-* && mv uses /usr/bin
+```
+
+Or if you have golang installed run the following command to install
+```bash
+go install github.com/malikashish8/uses@latest
 ```
 
 ## 🧑‍💻 Usage
 
-```bash
+```
 ❯ uses                   
 NAME:
    uses - securely manage secrets in dev environment
@@ -113,7 +123,7 @@ config file location: /Users/u/.config/uses/config.yaml
 ```
 
 ## 🛠 Contributing
-Contributions to the `uses` package are most welcome from engineers of all backgrounds and skill levels. In particular the addition of extra backends across popular operating systems would be appreciated.
+Contributions to the `uses` package are most welcome from engineers of all backgrounds and skill levels. In particular the addition of support for other popular operating systems would be appreciated.
 
 This project will adhere to the [Go Community Code of Conduct](https://go.dev/conduct) in the Github.
 
@@ -124,8 +134,10 @@ To make a contribution:
 * Submit a pull request back to this repo with a clear description of the problem you're solving
 * Ensure your PR passes all current (and new) tests
 
-## 🌈 Upcoming
+## 🌈 Bucket list
 
-- [ ] cache password for multiple secrets in a profile
+- [ ] cache password for multiple secrets in a project
 - [x] configure auto-complete
-- [ ] make available for other OSes as well in addition to Mac Darwin
+- [ ] make `uses` available for other OSes as well in addition to Mac Darwin
+- [ ] release on homebrew
+- [ ] add more unit tests
