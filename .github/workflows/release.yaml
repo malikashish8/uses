@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - shell: bash
-      run: env
+      run: env && echo $GITHUB_REF_NAME
     - uses: wangyoucao577/go-release-action@v1.28
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -22,4 +22,4 @@ jobs:
         goversion: 1.18
         project_path: "./"
         binary_name: "uses"
-        ldflags: -X main.Version=${{ env.GITHUB_REF_NAME }}
+        ldflags: -X main.Version=\$RELEASE_TAG
