@@ -18,17 +18,23 @@ NAME:
 USAGE:
    uses [global options] command [command options] [arguments...]
 
+VERSION:
+   v0.0.9
+
 COMMANDS:
-   set, s     set a secret key value pair
-   get, g     get secret for a name
-   list, l    list all secrets saved using `uses`
-   remove, r  delete a secret
-   webgoat    get secrets for project webgoat
-   project1   get secrets for project project1
-   help, h    Shows a list of commands or help for one command
+   project1    get secrets for project `project1` and run command
+   webgoat     get secrets for project `webgoat` and run command
+   config, c   locate config file
+   set, s      set a secret `name=value`
+   get, g      get secret for a `name`
+   list, l     list all secrets saved using `uses`
+   remove, r   delete a `secret`
+   completion  generate auto-complete commands for a shell
+   help, h     Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h  show help (default: false)
+   --help, -h     show help (default: false)
+   --version, -v  print the version (default: false)
 ```
 
 ### Set
@@ -62,6 +68,17 @@ Get can also run any command passed to it after setting the environment variable
 ```bash
 ❯ uses get GITHUB_TOKEN env | grep GITHUB_TOKEN
 GITHUB_TOKEN=sdknbowhlfownpns;s/dkfnbslsnwwn
+```
+
+### Enable Auto-completion
+#### ZSH
+```bash
+echo 'source <(uses completion zsh)' >>~/.zshrc
+```
+
+#### BASH
+```bash
+echo 'source <(uses completion bash)' >>~/.bashrc
 ```
 
 ### List
@@ -110,5 +127,5 @@ To make a contribution:
 ## 🌈 Upcoming
 
 - [ ] cache password for multiple secrets in a profile
-- [ ] configure auto-complete
+- [x] configure auto-complete
 - [ ] make available for other OSes as well in addition to Mac Darwin
