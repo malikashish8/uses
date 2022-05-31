@@ -7,7 +7,6 @@ import (
 	"strings"
 	"syscall"
 
-	log "github.com/sirupsen/logrus"
 	osexec "golang.org/x/sys/execabs"
 )
 

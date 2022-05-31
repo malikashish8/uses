@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"os/user"
@@ -9,8 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/99designs/keyring"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -22,21 +20,25 @@ type ConfigStruct struct {
 }
 
 var config ConfigStruct
-var ring keyring.Keyring
+var log *logrus.Logger
 var configpath string
 var Version = "development"
 var gitRef = "" // needs to be overridden in CI
 
 func init() {
+	// init logging
+	log = logrus.New()
+	log.Level = logrus.DebugLevel
+
 	// set Version if gitRef is available
 	gitRef = strings.TrimSpace(gitRef)
 	refParts := strings.Split(gitRef, "/")
 	if len(gitRef) > 0 && len(refParts) > 0 {
-		fmt.Println("running ...")
 		Version = refParts[len(refParts)-1]
+		log.Level = logrus.InfoLevel // also set log level to Info
 	}
 
-	// check if running on a supported os
+	// check if running on a supported OS
 	useros := runtime.GOOS
 	if useros == "darwin" {
 		log.Debug("user OS is mac")
@@ -80,35 +82,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Debugf("Unmarshalled Config YAML:\n%v\n", config)
-
-	// initalize keyring
-	ring, err = keyring.Open(keyring.Config{
-		ServiceName: "uses",
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-}
-
-func getSecret(name string) (value string, err error) {
-	i, err := ring.Get(name)
-	if err != nil {
-		return "", err
-	}
-	return string(i.Data), nil
-}
-
-func setSecret(name string, value string) (err error) {
-	err = ring.Set(keyring.Item{
-		Key:  name,
-		Data: []byte(value),
-	})
-	if err != nil {
-		return err
-	}
-	return nil
+	log.Tracef("Unmarshalled Config YAML:\n%v\n", config)
 }
 
 func main() {

@@ -6,6 +6,7 @@ require (
 	github.com/99designs/keyring v1.2.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/urfave/cli/v2 v2.8.1
+	golang.org/x/exp v0.0.0-20220518171630-0b5c67f07fdf
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	gopkg.in/yaml.v3 v3.0.0

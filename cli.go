@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/term"
 )
@@ -32,19 +31,7 @@ func enablecli() {
 					name, value, found := strings.Cut(pair, "=")
 
 					// check if secret already exists and prompt for overwrite
-					keys, err := ring.Keys()
-					if err != nil {
-						return err
-					}
-					sliceContains := func(s []string, str string) bool {
-						for _, v := range s {
-							if v == str {
-								return true
-							}
-						}
-						return false
-					}
-					if sliceContains(keys, name) {
+					if HasSecretKey(name) {
 						fmt.Print("Overwrite value? (y/n) ")
 						var choice string
 						fmt.Scanln(&choice)
@@ -65,7 +52,14 @@ func enablecli() {
 						fmt.Println()
 					}
 
-					err = setSecret(name, value)
+					// delete secret if it already exists
+					if HasSecretKey(name) {
+						err := DeleteSecret(name)
+						if err != nil {
+							return err
+						}
+					}
+					err := AddSecret(Secret{name, value})
 					if err != nil {
 						return err
 					}
@@ -83,7 +77,7 @@ func enablecli() {
 			Action: func(c *cli.Context) error {
 				if c.NArg() > 0 {
 					name := c.Args().First()
-					value, err := getSecret(name)
+					value, err := GetSecretValue(name)
 					if err != nil {
 						return err
 					}
@@ -107,10 +101,7 @@ func enablecli() {
 			Aliases: []string{"l"},
 			Usage:   "list all secrets saved using `uses`",
 			Action: func(ctx *cli.Context) error {
-				keys, err := ring.Keys()
-				if err != nil {
-					return err
-				}
+				keys := ListSecretKeys()
 				fmt.Println(keys)
 				return nil
 			},
@@ -122,7 +113,7 @@ func enablecli() {
 			Action: func(ctx *cli.Context) error {
 				if ctx.NArg() > 0 {
 					name := ctx.Args().First()
-					err := ring.Remove(name)
+					err := DeleteSecret(name)
 					if err != nil {
 						return err
 					}
@@ -173,10 +164,11 @@ func enablecli() {
 				// read all secrets listed in project
 				count := len(secretNames)
 				secrets := make([]string, count)
+				var value string
 				for i, name := range secretNames {
-					value, err := getSecret(name)
+					value, err = GetSecretValue(name)
 					if err != nil {
-						log.Errorf("unable to read secret %v", name)
+						log.Errorf("secret not found %v", name)
 						log.Fatal(err)
 					}
 					secrets[i] = name + "=" + value

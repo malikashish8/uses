@@ -136,7 +136,6 @@ To make a contribution:
 
 ## 🌈 Bucket list
 
-- [ ] cache password for multiple secrets in a project
 - [x] configure auto-complete
 - [ ] make `uses` available for other OSes as well in addition to Mac Darwin
 - [ ] release on homebrew
