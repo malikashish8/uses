@@ -1,3 +1,5 @@
+name: "Release Action"
+
 on:
   release:
     types: [created]

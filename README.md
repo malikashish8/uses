@@ -1,6 +1,8 @@
 # 🔐 uses - USE Secure environment variables in dev
 
-[![.github/workflows/release.yaml](https://github.com/malikashish8/uses/actions/workflows/release.yaml/badge.svg)](https://github.com/malikashish8/uses/actions/workflows/release.yaml)
+[![Release Action](https://github.com/malikashish8/uses/actions/workflows/release.yaml/badge.svg)](https://github.com/malikashish8/uses/actions/workflows/release.yaml)
+[![CodeQL Scan](https://github.com/malikashish8/uses/actions/workflows/codeql.yaml/badge.svg?branch=master)](https://github.com/malikashish8/uses/actions/workflows/codeql.yaml)
+[![Semgrep Scan](https://github.com/malikashish8/uses/actions/workflows/semgrep.yaml/badge.svg?branch=master)](https://github.com/malikashish8/uses/actions/workflows/semgrep.yaml)
 
 Taking inspiration from [aws-vault](https://github.com/99designs/aws-vaults), `uses` makes `use` of OS provided `s`ecret management solutions to save secrets in the development environment. Grouping of secrets is made possible by a config file.
 
