@@ -40,9 +40,7 @@ func init() {
 
 	// check if running on a supported OS
 	useros := runtime.GOOS
-	if useros == "darwin" {
-		log.Debug("user OS is mac")
-	} else {
+	if useros != "darwin" {
 		panic("not implemented")
 	}
 
@@ -52,7 +50,6 @@ func init() {
 		log.Fatal(err)
 	}
 	home := user.HomeDir
-	log.Debug("home: " + home)
 
 	// get config folder
 	configfolder := filepath.Join(home, ".config/uses")

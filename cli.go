@@ -28,10 +28,10 @@ func enablecli() {
 			Action: func(c *cli.Context) error {
 				if c.NArg() > 0 {
 					pair := c.Args().First()
-					name, value, found := strings.Cut(pair, "=")
+					name, value, foundEqual := strings.Cut(pair, "=")
 
 					// check if secret already exists and prompt for overwrite
-					if HasSecretKey(name) {
+					if secretService.HasSecretKey(name) {
 						fmt.Print("Overwrite value? (y/n) ")
 						var choice string
 						fmt.Scanln(&choice)
@@ -41,7 +41,7 @@ func enablecli() {
 					}
 
 					// Read secret value since argument was name only
-					if !found {
+					if !foundEqual {
 						fmt.Printf("Enter value: ")
 						fd := os.Stdin.Fd()
 						bRead, err := term.ReadPassword(int(fd))
@@ -53,13 +53,13 @@ func enablecli() {
 					}
 
 					// delete secret if it already exists
-					if HasSecretKey(name) {
-						err := DeleteSecret(name)
+					if secretService.HasSecretKey(name) {
+						err := secretService.DeleteSecret(name)
 						if err != nil {
 							return err
 						}
 					}
-					err := AddSecret(Secret{name, value})
+					err := secretService.AddSecret(Secret{name, value})
 					if err != nil {
 						return err
 					}
@@ -77,7 +77,7 @@ func enablecli() {
 			Action: func(c *cli.Context) error {
 				if c.NArg() > 0 {
 					name := c.Args().First()
-					value, err := GetSecretValue(name)
+					value, err := secretService.GetSecretValue(name)
 					if err != nil {
 						return err
 					}
@@ -101,7 +101,7 @@ func enablecli() {
 			Aliases: []string{"l"},
 			Usage:   "list all secrets saved using `uses`",
 			Action: func(ctx *cli.Context) error {
-				keys := ListSecretKeys()
+				keys := secretService.ListSecretKeys()
 				fmt.Println(keys)
 				return nil
 			},
@@ -113,7 +113,7 @@ func enablecli() {
 			Action: func(ctx *cli.Context) error {
 				if ctx.NArg() > 0 {
 					name := ctx.Args().First()
-					err := DeleteSecret(name)
+					err := secretService.DeleteSecret(name)
 					if err != nil {
 						return err
 					}
@@ -166,7 +166,7 @@ func enablecli() {
 				secrets := make([]string, count)
 				var value string
 				for i, name := range secretNames {
-					value, err = GetSecretValue(name)
+					value, err = secretService.GetSecretValue(name)
 					if err != nil {
 						log.Errorf("secret not found %v", name)
 						log.Fatal(err)
