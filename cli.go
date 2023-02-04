@@ -102,7 +102,7 @@ func enablecli() {
 			Usage:   "list all secrets saved using `uses`",
 			Action: func(ctx *cli.Context) error {
 				keys := secretService.ListSecretKeys()
-				fmt.Println(keys)
+				fmt.Println(strings.Join(keys, "\n"))
 				return nil
 			},
 		},
