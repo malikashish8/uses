@@ -14,14 +14,14 @@ type SecretService struct {
 }
 
 type Secret struct {
-	Key   string
-	Value string
+	Key   string // unique key for this secret
+	Value string // value of this secret
 }
 
 var secretService SecretService
 var ring keyring.Keyring
 
-// lazy initialize secret service so that secret is not access unless needed
+// lazy initialize secret service so that secret is not accessed unless needed
 func (s *SecretService) lazyInit() {
 	s.secretOnce.Do(func() {
 		var err error
@@ -45,17 +45,17 @@ func (s *SecretService) lazyInit() {
 	})
 }
 
-func getSecretsString(name string) (value string, err error) {
-	i, err := ring.Get(name)
+func getSecretsString(key string) (value string, err error) {
+	i, err := ring.Get(key)
 	if err != nil {
 		return "", err
 	}
 	return string(i.Data), nil
 }
 
-func saveSecretsString(name string, value string) (err error) {
+func saveSecretsString(key string, value string) (err error) {
 	err = ring.Set(keyring.Item{
-		Key:  name,
+		Key:  key,
 		Data: []byte(value),
 	})
 	return err

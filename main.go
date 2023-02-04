@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/user"
@@ -12,10 +15,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type ConfigSecret struct {
+	Key          string `yaml:"key"`
+	VariableName string `yaml:"variableName"`
+}
 type ConfigStruct struct {
 	Project []struct {
-		Name    string `yaml:"name"`
-		Secrets []string
+		Name         string         `yaml:"name"`
+		ConfigSecret []ConfigSecret `yaml:"secrets"`
 	} `yaml:"project"`
 }
 
@@ -84,4 +91,35 @@ func init() {
 
 func main() {
 	enablecli()
+}
+
+// Custom unmarshaler for ConfigSecret to support `key as variableName` syntax
+func (c *ConfigSecret) UnmarshalYAML(value *yaml.Node) error {
+	var rawInput string
+	// try to decode as a string and then check if it has ` as `
+	if err := value.Decode(&rawInput); err == nil {
+		parts := strings.Split(rawInput, " as ")
+		if len(parts) == 2 {
+			c.Key = parts[0]
+			c.VariableName = parts[1]
+			log.Debugf("UnmarshalYAML successful with 2 values for: %v", c)
+			return nil
+		} else if len(parts) == 1 {
+			c.Key = rawInput
+			c.VariableName = rawInput
+			log.Debugf("UnmarshalYAML successful with 1 value for: %v", c)
+			return nil
+		} else {
+			log.Errorf("UnmarshalYAML failed with value: %v", rawInput)
+			return errors.New("invalid config for secrets at " + configpath + ": " + rawInput)
+		}
+	}
+
+	// error handling - convert value to readable string and return error
+	buffer := &bytes.Buffer{}
+	for _, v := range value.Content {
+		buffer.WriteString("\t" + v.Value)
+	}
+
+	return fmt.Errorf("invalid config for secrets at %v: %v", configpath, buffer)
 }
