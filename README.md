@@ -39,7 +39,7 @@ VERSION:
 COMMANDS:
    project1    get secrets for project `project1` and run command
    webgoat     get secrets for project `webgoat` and run command
-   config, c   locate config file
+   config, c   open config file
    set, s      set a secret `name=value`
    get, g      get secret for a `name`
    list, l     list all secrets saved using `uses`

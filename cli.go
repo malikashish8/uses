@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/term"
 )
@@ -15,9 +16,14 @@ func enablecli() {
 		{
 			Name:    "config",
 			Aliases: []string{"c"},
-			Usage:   "locate config file",
+			Usage:   "open config file",
 			Action: func(ctx *cli.Context) error {
-				fmt.Printf("config file location: %v\n", configpath)
+				// open .yaml with default editor, otherwise just print path
+				if strings.HasSuffix(configpath, ".yaml") {
+					open.Run(configpath)
+				} else {
+					fmt.Printf("config file location: %v\n", configpath)
+				}
 				return nil
 			},
 		},

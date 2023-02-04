@@ -21,5 +21,6 @@ require (
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 )
