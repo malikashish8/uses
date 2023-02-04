@@ -59,8 +59,8 @@ func init() {
 	home := user.HomeDir
 
 	// get config folder
-	configfolder := filepath.Join(home, ".config/uses")
-	configpath = filepath.Join(configfolder, "config.yaml")
+	configfolder := filepath.Join(home, ".config")
+	configpath = filepath.Join(configfolder, "uses.yaml")
 
 	// init config if not exits
 	_, err = os.Stat(configfolder)
