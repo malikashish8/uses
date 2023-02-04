@@ -24,14 +24,14 @@ func enablecli() {
 		{
 			Name:    "set",
 			Aliases: []string{"s"},
-			Usage:   "set a secret `name=value`",
+			Usage:   "set a secret `key=value`",
 			Action: func(c *cli.Context) error {
 				if c.NArg() > 0 {
 					pair := c.Args().First()
-					name, value, foundEqual := strings.Cut(pair, "=")
+					key, value, foundEqual := strings.Cut(pair, "=")
 
 					// check if secret already exists and prompt for overwrite
-					if secretService.HasSecretKey(name) {
+					if secretService.HasSecretKey(key) {
 						fmt.Print("Overwrite value? (y/n) ")
 						var choice string
 						fmt.Scanln(&choice)
@@ -40,7 +40,7 @@ func enablecli() {
 						}
 					}
 
-					// Read secret value since argument was name only
+					// Read secret value since argument was key only
 					if !foundEqual {
 						fmt.Printf("Enter value: ")
 						fd := os.Stdin.Fd()
@@ -53,17 +53,17 @@ func enablecli() {
 					}
 
 					// delete secret if it already exists
-					if secretService.HasSecretKey(name) {
-						err := secretService.DeleteSecret(name)
+					if secretService.HasSecretKey(key) {
+						err := secretService.DeleteSecret(key)
 						if err != nil {
 							return err
 						}
 					}
-					err := secretService.AddSecret(Secret{name, value})
+					err := secretService.AddSecret(Secret{key, value})
 					if err != nil {
 						return err
 					}
-					log.Infof("%v saved", name)
+					log.Infof("%v saved", key)
 				} else {
 					return errors.New("`key=value` pair not found to save")
 				}
@@ -73,16 +73,16 @@ func enablecli() {
 		{
 			Name:    "get",
 			Aliases: []string{"g"},
-			Usage:   "get secret for a `name`",
+			Usage:   "get secret for a `key`",
 			Action: func(c *cli.Context) error {
 				if c.NArg() > 0 {
-					name := c.Args().First()
-					value, err := secretService.GetSecretValue(name)
+					key := c.Args().First()
+					value, err := secretService.GetSecretValue(key)
 					if err != nil {
 						return err
 					}
 					if c.NArg() > 1 {
-						err = execCmd(c.Args().Slice()[1], c.Args().Slice()[2:], []string{name + "=" + value})
+						err = execCmd(c.Args().Slice()[1], c.Args().Slice()[2:], []string{key + "=" + value})
 
 						if err != nil {
 							return err
@@ -112,8 +112,8 @@ func enablecli() {
 			Usage:   "delete a `secret`",
 			Action: func(ctx *cli.Context) error {
 				if ctx.NArg() > 0 {
-					name := ctx.Args().First()
-					err := secretService.DeleteSecret(name)
+					key := ctx.Args().First()
+					err := secretService.DeleteSecret(key)
 					if err != nil {
 						return err
 					}
@@ -148,10 +148,10 @@ func enablecli() {
 			Usage: "get secrets for project `" + m.Name + "` and run command",
 			Action: func(ctx *cli.Context) error {
 				// find project with name
-				getProjectSecrets := func(name string) ([]string, error) {
+				getProjectSecrets := func(name string) ([]ConfigSecret, error) {
 					for _, p := range config.Project {
 						if p.Name == name {
-							return p.Secrets[:], nil
+							return p.ConfigSecret[:], nil
 						}
 					}
 					return nil, errors.New("unable to find in config project " + name)
@@ -165,13 +165,13 @@ func enablecli() {
 				count := len(secretNames)
 				secrets := make([]string, count)
 				var value string
-				for i, name := range secretNames {
-					value, err = secretService.GetSecretValue(name)
+				for i, configSecret := range secretNames {
+					value, err = secretService.GetSecretValue(configSecret.Key)
 					if err != nil {
-						log.Errorf("secret not found %v", name)
+						log.Errorf("secret not found %v", configSecret.Key)
 						log.Fatal(err)
 					}
-					secrets[i] = name + "=" + value
+					secrets[i] = configSecret.VariableName + "=" + value
 				}
 
 				// run command with secrets
