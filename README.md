@@ -10,18 +10,13 @@ Having secrets lying around in environment variables in the development environm
 
 ## ⚡️ Installation
 
-Install from binary
+Install using [Homebrew](https://brew.sh/)
 
 ```bash
-wget https://github.com/malikashish8/uses/releases/latest/download/uses-darwin-amd64.tar.gz
-tar -zxf uses-* && mv uses /usr/bin
+brew install malikashish8/tap/uses
 ```
 
-Or if you have golang installed run the following command to install
-
-```bash
-go install github.com/malikashish8/uses@latest
-```
+Or download the binary from [releases](https://github.com/malikashish8/uses/releases) and add it to your path.
 
 ## 🧑‍💻 Usage
 
