@@ -30,18 +30,16 @@ var config ConfigStruct
 var log *logrus.Logger
 var configpath string
 var Version = "development"
-var gitRef = "" // needs to be overridden in CI
+var gitTag = "" // needs to be overridden in CI `go build -ldflags="main.gitTag=v0.1.1)"`
 
 func init() {
 	// init logging
 	log = logrus.New()
 	log.Level = logrus.DebugLevel
 
-	// set Version if gitRef is available
-	gitRef = strings.TrimSpace(gitRef)
-	refParts := strings.Split(gitRef, "/")
-	if len(gitRef) > 0 && len(refParts) > 0 {
-		Version = refParts[len(refParts)-1]
+	// set Version if gitTag is available
+	if len(gitTag) > 0 {
+		Version = gitTag
 		log.Level = logrus.InfoLevel // also set log level to Info
 	}
 
