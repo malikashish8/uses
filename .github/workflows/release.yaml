@@ -3,6 +3,7 @@ name: "Release Action"
 # on:
 #   release:
 #     types: [created]
+on: push
 
 jobs:
   releases-matrix:
