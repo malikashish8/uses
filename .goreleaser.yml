@@ -7,7 +7,7 @@ before:
 builds:
   - 
     ldflags:
-      - -X main.gitRef={{ github.ref }}
+      - -X main.gitRef=${{ github.ref }}
     env:
         - CGO_ENABLED=0
     goos:
