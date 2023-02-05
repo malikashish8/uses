@@ -8,7 +8,7 @@ builds:
   - 
     ldflags:
       - -X main.gitRef={{ github.ref }}
-      - env:
+    env:
         - CGO_ENABLED=0
     goos:
       - darwin
