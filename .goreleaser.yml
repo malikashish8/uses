@@ -1,0 +1,46 @@
+# Check https://goreleaser.com/customization/hooks/
+before:
+  hooks:
+  - go mod download
+
+# Check https://goreleaser.com/customization/build/
+builds:
+  - 
+    ldflags:
+      - -X main.gitTag={{ .Tag }}
+    env:
+        - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+    ignore:
+      -
+        goos: darwin
+        goarch: 386
+      -
+        goos: linux
+        goarch: arm
+        goarm: 7
+
+# Check https://goreleaser.com/customization/archive/
+archives:
+  -
+    name_template: "uses_{{ .Version }}_{{ .Os }}_{{ .Arch }}"  
+    replacements:
+      amd64: x86_64
+
+project_name: uses
+
+# Check https://goreleaser.com/customization/homebrew/
+brews:
+  -
+    homepage: 'https://github.com/malikashish8/uses'
+    description: 'use secure environment variables in dev'
+    folder: Formula
+    commit_author:
+      name: malikashish8
+    tap:
+      owner: malikashish8
+      name: uses
