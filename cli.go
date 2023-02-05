@@ -108,7 +108,9 @@ func enablecli() {
 			Usage:   "list all secrets saved using `uses`",
 			Action: func(ctx *cli.Context) error {
 				keys := secretService.ListSecretKeys()
-				fmt.Println(strings.Join(keys, "\n"))
+				if len(keys) > 0 {
+					fmt.Println(strings.Join(keys, "\n"))
+				}
 				return nil
 			},
 		},
@@ -122,6 +124,8 @@ func enablecli() {
 					err := secretService.DeleteSecret(key)
 					if err != nil {
 						return err
+					} else {
+						log.Infof("%v deleted", key)
 					}
 				} else {
 					return errors.New("`key` required for removal")

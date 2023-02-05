@@ -26,7 +26,10 @@ func (s *SecretService) lazyInit() {
 	s.secretOnce.Do(func() {
 		var err error
 		ring, err = keyring.Open(keyring.Config{
-			ServiceName: "uses",
+			KeychainName:             "uses",
+			KeychainTrustApplication: true,
+			ServiceName:              "uses-secrets",
+			LibSecretCollectionName:  "uses",
 		})
 		if err != nil {
 			log.Fatal(err)
@@ -46,11 +49,11 @@ func (s *SecretService) lazyInit() {
 }
 
 func getSecretsString(key string) (value string, err error) {
-	i, err := ring.Get(key)
+	item, err := ring.Get(key)
 	if err != nil {
 		return "", err
 	}
-	return string(i.Data), nil
+	return string(item.Data), nil
 }
 
 func saveSecretsString(key string, value string) (err error) {
