@@ -83,7 +83,7 @@ project:
   - GITHUB_TOKEN
 ```
 
-Location of the config file is `/Users/<USER>/.config/uses.yaml`. `uses config` opens the config with default editor.
+Location of the config file is `/Users/<USER>/.uses/config.yaml`. `uses config` opens the config with default editor.
 
 #### Same environment variable name for multiple projects
 

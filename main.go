@@ -11,7 +11,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/malikashish8/uses/logging"
 	"gopkg.in/yaml.v3"
 )
 
@@ -27,20 +27,15 @@ type ConfigStruct struct {
 }
 
 var config ConfigStruct
-var log *logrus.Logger
 var configpath string
 var Version = "development"
 var gitTag = "" // needs to be overridden in CI `go build -ldflags="main.gitTag=v0.1.1)"`
 
 func init() {
-	// init logging
-	log = logrus.New()
-	log.Level = logrus.DebugLevel
 
 	// set Version if gitTag is available
 	if len(gitTag) > 0 {
 		Version = gitTag
-		log.Level = logrus.InfoLevel // also set log level to Info
 	}
 
 	// check if running on a supported OS
@@ -52,13 +47,13 @@ func init() {
 	// get home dir
 	user, err := user.Current()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error: %s", err)
 	}
 	home := user.HomeDir
 
 	// get config folder
-	configfolder := filepath.Join(home, ".config")
-	configpath = filepath.Join(configfolder, "uses.yaml")
+	configfolder := filepath.Join(home, ".uses")
+	configpath = filepath.Join(configfolder, "config.yaml")
 
 	// init config if not exits
 	_, err = os.Stat(configfolder)
@@ -82,9 +77,9 @@ func init() {
 	config = ConfigStruct{}
 	err = yaml.Unmarshal(configyaml, &config)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error: %s", err)
 	}
-	log.Tracef("Unmarshalled Config YAML:\n%v\n", config)
+	log.Trace("Unmarshalled Config YAML:\n%v\n", config)
 }
 
 func main() {
@@ -100,15 +95,15 @@ func (c *ConfigSecret) UnmarshalYAML(value *yaml.Node) error {
 		if len(parts) == 2 {
 			c.Key = parts[0]
 			c.VariableName = parts[1]
-			log.Debugf("UnmarshalYAML successful with 2 values for: %v", c)
+			log.Debug("UnmarshalYAML successful with 2 values for: %v", c)
 			return nil
 		} else if len(parts) == 1 {
 			c.Key = rawInput
 			c.VariableName = rawInput
-			log.Debugf("UnmarshalYAML successful with 1 value for: %v", c)
+			log.Debug("UnmarshalYAML successful with 1 value for: %v", c)
 			return nil
 		} else {
-			log.Errorf("UnmarshalYAML failed with value: %v", rawInput)
+			log.Error("UnmarshalYAML failed with value: %v", rawInput)
 			return errors.New("invalid config for secrets at " + configpath + ": " + rawInput)
 		}
 	}

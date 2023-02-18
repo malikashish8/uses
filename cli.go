@@ -6,9 +6,12 @@ import (
 	"os"
 	"strings"
 
+	log "github.com/malikashish8/uses/logging"
+	"github.com/malikashish8/uses/secretService"
+	"golang.org/x/term"
+
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
-	"golang.org/x/term"
 )
 
 func enablecli() {
@@ -37,7 +40,12 @@ func enablecli() {
 					key, value, foundEqual := strings.Cut(pair, "=")
 
 					// check if secret already exists and prompt for overwrite
-					if secretService.HasSecretKey(key) {
+					exists, err := secretService.SecretExists(key)
+					log.Debug("exists=%v, err=%v", exists, err)
+					if err != nil {
+						log.Error("Unable to read secrets list: %v", err)
+					}
+					if exists {
 						fmt.Print("Overwrite value? (y/n) ")
 						var choice string
 						fmt.Scanln(&choice)
@@ -52,24 +60,17 @@ func enablecli() {
 						fd := os.Stdin.Fd()
 						bRead, err := term.ReadPassword(int(fd))
 						if err != nil {
-							log.Fatal(err)
+							log.Fatal("Error: %v", err)
 						}
 						value = string(bRead)
 						fmt.Println()
 					}
 
-					// delete secret if it already exists
-					if secretService.HasSecretKey(key) {
-						err := secretService.DeleteSecret(key)
-						if err != nil {
-							return err
-						}
-					}
-					err := secretService.AddSecret(Secret{key, value})
+					err = secretService.SaveSecret(key, value)
 					if err != nil {
 						return err
 					}
-					log.Infof("%v saved", key)
+					log.Info("%v saved", key)
 				} else {
 					return errors.New("`key=value` pair not found to save")
 				}
@@ -107,7 +108,10 @@ func enablecli() {
 			Aliases: []string{"l"},
 			Usage:   "list all secrets saved using `uses`",
 			Action: func(ctx *cli.Context) error {
-				keys := secretService.ListSecretKeys()
+				keys, err := secretService.ListSecretKeys()
+				if err != nil {
+					return err
+				}
 				if len(keys) > 0 {
 					fmt.Println(strings.Join(keys, "\n"))
 				}
@@ -125,7 +129,7 @@ func enablecli() {
 					if err != nil {
 						return err
 					} else {
-						log.Infof("%v deleted", key)
+						log.Info("%v deleted", key)
 					}
 				} else {
 					return errors.New("`key` required for removal")
@@ -168,7 +172,7 @@ func enablecli() {
 				}
 				secretNames, err := getProjectSecrets(ctx.Command.Name)
 				if err != nil {
-					log.Fatal(err)
+					log.Fatal("Error: %v", err)
 				}
 
 				// read all secrets listed in project
@@ -178,8 +182,8 @@ func enablecli() {
 				for i, configSecret := range secretNames {
 					value, err = secretService.GetSecretValue(configSecret.Key)
 					if err != nil {
-						log.Errorf("secret not found %v", configSecret.Key)
-						log.Fatal(err)
+						log.Error("secret not found %v", configSecret.Key)
+						log.Fatal("Error: %v", err)
 					}
 					secrets[i] = configSecret.VariableName + "=" + value
 				}
@@ -212,6 +216,6 @@ func enablecli() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error: %v", err)
 	}
 }

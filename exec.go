@@ -7,12 +7,13 @@ import (
 	"strings"
 	"syscall"
 
+	log "github.com/malikashish8/uses/logging"
 	osexec "golang.org/x/sys/execabs"
 )
 
 // copied mostly from https://github.com/99designs/aws-vault/blob/90904707ff5e07fec529ac99ae1df445c040c7cd/cli/exec.go#L271
 func execCmd(command string, args []string, env []string) error {
-	log.Printf("Starting child process: %s %s", command, strings.Join(args, " "))
+	log.Info("Starting child process: %s %s", command, strings.Join(args, " "))
 
 	cmd := osexec.Command(command, args...)
 	cmd.Stdin = os.Stdin
